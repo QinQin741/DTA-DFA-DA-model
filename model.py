@@ -11,7 +11,7 @@ from functions import ReverseLayerF
 class CNNModel(nn.Module):
     def __init__(self):
         super(CNNModel, self).__init__()
-
+        # Feature extraction block
         self.resnet_model = models.resnet18(weights="IMAGENET1K_V1")
         self.conv1 = self.resnet_model.conv1
         self.bn1 = self.resnet_model.bn1
@@ -21,8 +21,8 @@ class CNNModel(nn.Module):
         self.layer2 = self.resnet_model.layer2
         self.layer3 = self.resnet_model.layer3
         self.avgpool = self.resnet_model.avgpool
-        # self.fc1 = nn.Linear(256, latent_dim)
-
+    
+        # Classification block
         self.class_classifier = nn.Sequential()
         self.class_classifier.add_module('c_fc1', nn.Linear(256, 100))
         self.class_classifier.add_module('c_bn1', nn.BatchNorm1d(100))
@@ -33,7 +33,8 @@ class CNNModel(nn.Module):
         self.class_classifier.add_module('c_relu2', nn.ReLU(True))
         self.class_classifier.add_module('c_fc3', nn.Linear(100, 2))
         self.class_classifier.add_module('c_softmax', nn.LogSoftmax(dim=1))
-
+        
+        # Tag adversarial block
         self.domain_classifier = nn.Sequential()
         self.domain_classifier.add_module('d_fc1', nn.Linear(256, 100))
         self.domain_classifier.add_module('d_bn1', nn.BatchNorm1d(100))
@@ -41,6 +42,8 @@ class CNNModel(nn.Module):
         self.domain_classifier.add_module('d_fc2', nn.Linear(100, 2))
         self.domain_classifier.add_module('d_softmax', nn.LogSoftmax(dim=1))
 
+        
+        # Feature alignment block
         self.MMD_classifier = nn.Sequential()
         self.MMD_classifier.add_module('m_fc1', nn.Linear(256, 256))
         self.MMD_classifier.add_module('m_bn1', nn.BatchNorm1d(256))
