@@ -4,7 +4,8 @@ import sys
 import torch.backends.cudnn as cudnn
 import torch.optim as optim
 import torch.utils.data
-
+import torch
+import torch.nn as nn
 import numpy as np
 from data_loader import GetLoader
 from torchvision import datasets
@@ -17,8 +18,8 @@ import torchvision
 
 
 
-source_dataset_name = 'stylegan/train_small'
-target_dataset_name = 'DFFD datasets/pggan_v1/val'
+source_dataset_name = 'F:/wangqin/Dataset/stylegan/train_small'
+target_dataset_name = 'F:/wangqin/Dataset/DFFD datasets/pggan_v1/val'
 source_image_root = 'F:/wangqin/Dataset/stylegan/train'
 target_image_root = 'F:/wangqin/Dataset/DFFD datasets/pggan_v1/train'
 model_root = 'weights'
@@ -27,8 +28,7 @@ start_lr = 1e-4
 batch_size = 128
 image_size = 256
 n_epoch = 50
-source_num_images = 1000
-target_num_images = 1000
+
 
 
 manual_seed = random.randint(1, 10000)
@@ -53,8 +53,7 @@ dataset_source = torchvision.datasets.ImageFolder(
     root=source_image_root,
     transform=img_transform_source
 )
-source_indices = list(range(len(dataset_source)))
-source_subset_indices = torch.utils.data.SubsetRandomSampler(source_indices[:source_num_images])
+
 
 dataloader_source = torch.utils.data.DataLoader(
     dataset=dataset_source,
@@ -69,17 +68,7 @@ dataset_target = torchvision.datasets.ImageFolder(
     root=target_image_root,
     transform=img_transform_target
 )
-target_indices = list(range(len(dataset_target)))
-target_subset_indices = torch.utils.data.SubsetRandomSampler(source_indices[:target_num_images])
-# dataloader_target = torch.utils.data.DataLoader(
-#     dataset=dataset_target,
-#     batch_size=batch_size,
-#     shuffle=False,
-#     num_workers=6,
-#     drop_last=True,
-#     pin_memory=True,
-#     sampler=target_subset_indices
-# )
+
 dataloader_target = torch.utils.data.DataLoader(
     dataset=dataset_target,
     batch_size=batch_size,
@@ -95,9 +84,6 @@ my_net = CNNModel()
 optimizer = optim.Adam(my_net.parameters(), lr=start_lr)
 loss_class = torch.nn.NLLLoss()
 loss_domain = torch.nn.NLLLoss()
-
-import torch
-import torch.nn as nn
 
 class MMDLoss(nn.Module):
     '''
@@ -157,16 +143,6 @@ class MMDLoss(nn.Module):
             loss = torch.mean(XX + YY - XY - YX)
             return loss
 
-
-
-
-Resume = False
-# Resume = True
-if Resume:
-    my_net = torch.load(os.path.join(
-        model_root, 'MMD_domain_stylegan_PGGAN_model_epoch_best.pth'
-    ))
-
 if cuda:
     my_net = my_net.cuda()
     loss_class = loss_class.cuda()
@@ -224,9 +200,8 @@ if __name__ == "__main__":
                 t_domain_label = t_domain_label.cuda()
 
             my_net.zero_grad()
-            t_class_output, t_domain_output, t_feature_output = my_net(input_data=t_img, alpha=alpha)
+            _, t_domain_output, t_feature_output = my_net(input_data=t_img, alpha=alpha)
             err_t_domain = loss_domain(t_domain_output, t_domain_label)
-            err_t_label = loss_class(t_class_output, t_label)
             MMD = MMDLoss()
             MMD = MMD.cuda()
             err_MMD = MMD(source = s_feature_output, target = t_feature_output)
@@ -238,7 +213,7 @@ if __name__ == "__main__":
                   % (epoch, i + 1, len_dataloader, err.data.cpu().numpy(), err_s_label.data.cpu().numpy(), err_t_label.data.cpu().numpy(),
                      err_s_domain.data.cpu().numpy(), err_t_domain.data.cpu().item(), err_MMD.data.cpu().numpy()))
             sys.stdout.flush()
-        torch.save(my_net, '{0}/MMD_domain_stylegan_PGGAN_model_epoch_current.pth'.format(model_root))
+        torch.save(my_net, '{0}/current.pth'.format(model_root))
 
         print('\n')
 
@@ -246,9 +221,9 @@ if __name__ == "__main__":
         print('Accuracy of the %s dataset: %f\n' % ('target', accu_t))
         if accu_t > best_accu_t:
             best_accu_t = accu_t
-            torch.save(my_net, '{0}/MMD_domain_stylegan_PGGAN_model_epoch_best.pth'.format(model_root))
+            torch.save(my_net, '{0}/best.pth'.format(model_root))
 
     print('============ Summary ============= \n')
     # print('Accuracy of the %s dataset: %f' % ('source', best_accu_s))
     print('Accuracy of the %s dataset: %f' % ('target', best_accu_t))
-    print('Corresponding model was save in ' + model_root + '/MMD_domain_stylegan_PGGAN_model_epoch_best.pth')
+    print('Corresponding model was save in ' + model_root + '/best.pth')
