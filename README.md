@@ -1,9 +1,9 @@
-## This is a pytorch implementation of the paper *[Unsupervised Domain Adaptation by Backpropagation](http://sites.skoltech.ru/compvision/projects/grl/)*
+## This is a pytorch implementation of the paper *[Domain Adaptation based Unsupervised Cross-Type Deepfake Image Detection]*
 
 
 #### Environment
-- Pytorch 1.6
-- Python 3.8.5
+- Pytorch 1.12
+- Python 3.7
 
 #### Network Structure
 
@@ -11,15 +11,15 @@
 ![p8KTyD.md.jpg](https://s1.ax1x.com/2018/01/12/p8KTyD.md.jpg)
 
 #### Dataset
+# Test data
+source_dataset_name = './Dataset/source/test' 
+target_dataset_name = './Dataset/target/test'
 
-First, download target dataset mnist_m from [pan.quark.com](https://pan.quark.cn/s/f4002a4fadbc) or [Google Drive](https://drive.google.com/open?id=0B_tExHiYS-0veklUZHFYT19KYjg), and put mnist_m dataset into dataset/mnist_m, the structure is as follows:
+# Train data
+source_image_root = './Dataset/source/train'
+target_image_root = './Dataset/source/train'
 
-```
---dataset--mnist_m--mnist_m_train
-                 |--mnist_m_test
-                 |--mnist_m_train_labels.txt
-                 |--mnist_m_test_labels.txt
-                 |--.gitkeep
+​ Place the directory in which each set of data resides within double quotes in the code above. Note that the file directory for each set of data contains two subdirectories, Real and Fake, which contain their respective images. 
 
 ```
 
