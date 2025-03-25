@@ -20,7 +20,7 @@
 
 
 #### Dataset
-# Test data
+# Validation data
 source_dataset_name = './Dataset/source/test' 
 target_dataset_name = './Dataset/target/test'
 
