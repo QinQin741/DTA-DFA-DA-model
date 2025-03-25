@@ -16,7 +16,7 @@
 
 #### Network Structure
 
-![image](https://github.com/user-attachments/assets/fe59a939-e49d-4b92-a785-6b929e37984f)
+![绘图36](https://github.com/user-attachments/assets/e2d2dc81-5063-4914-b5d3-d438999c5fc5)
 
 
 #### Dataset
