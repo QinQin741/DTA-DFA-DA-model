@@ -12,12 +12,12 @@ import matplotlib.pyplot as plt
 import torch.nn.functional as F
 import numpy as np
 import torch
-DDCDA_evaluation_indicator = 0
+
 
 def test(dataset_name):
 
     model_root = 'weights'
-    image_root = os.path.join('F:/wangqin/Dataset', dataset_name)
+    image_root = dataset_name
 
     cuda = True
     cudnn.benchmark = True
@@ -54,8 +54,8 @@ def test(dataset_name):
 
     """ test """
     my_net = torch.load(os.path.join(
-      # model_root, 'MMD_domain_stylegan_PGGAN_model_epoch_current.pth'
-        model_root, 'MMD_domain_GDWCT_FTM_model_epoch_best.pth'
+         model_root, 'current.pth'
+       #  model_root, 'best.pth'
 
     ))
 
@@ -79,32 +79,12 @@ def test(dataset_name):
     precision = precision_score(true_labels, predictions)
     fpr, tpr, _ = roc_curve(true_labels, scores)
     auroc = auc(fpr, tpr)
-
-
     return accuracy, recall, precision, auroc
 
 if __name__ == "__main__":
 
-    # s_test_accu, s_test_rec, s_test_pre, s_test_auroc = test('DFFD datasets/faceapp/test')
-    # print('%s, Accuracy: %f, Recall: %f, Precision: %f, AUROC: %f' % ('source test', s_test_accu, s_test_rec, s_test_pre, s_test_auroc))
-
+   
     t_test_accu, t_test_rec, t_test_pre, t_test_auroc = test('AttGAN/test')
     print('%s, Accuracy: %f, Recall: %f, Precision: %f, AUROC: %f' % ('target test', t_test_accu, t_test_rec, t_test_pre, t_test_auroc))
-
-    # # 将指标差异的各个部分转换为 Torch 张量
-    # s_test_accu = torch.tensor(s_test_accu)
-    # s_test_rec = torch.tensor(s_test_rec)
-    # s_test_pre = torch.tensor(s_test_pre)
-    # s_test_auroc = torch.tensor(s_test_auroc)
-    # t_test_accu = torch.tensor(t_test_accu)
-    # t_test_rec = torch.tensor(t_test_rec)
-    # t_test_pre = torch.tensor(t_test_pre)
-    # t_test_auroc = torch.tensor(t_test_auroc)
-    #
-    # # 计算DDCDA评价指标
-    # DDCDA_evaluation_indicator = torch.sqrt(torch.pow(s_test_accu - t_test_accu, 2) + torch.pow(s_test_rec - t_test_rec, 2) + torch.pow(s_test_pre - t_test_pre, 2) + torch.pow(s_test_auroc - t_test_auroc, 2)) / 4
-    # print('DDCDA evaluation indicator from %s to %s： %f ' % ('stylegan', 'PGGAN', DDCDA_evaluation_indicator))
-
-
 
 
