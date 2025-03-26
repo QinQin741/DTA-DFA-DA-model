@@ -34,7 +34,7 @@ target_image_root = './Dataset/source/train'
 
 #### Training
 
-Then, run `main.py`
+run `main.py`
 
 
 #### Test
