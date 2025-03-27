@@ -1,4 +1,3 @@
-#该网络的特征提取部分的网络ResNet18中的一部分，使用的ResNet的前部分，抛弃最后一个残差块，提出我们自己的ResNet13.类分类器和域分类器都来自原始DANN的结构
 from torchvision import models
 import torch
 from torch import nn
@@ -48,7 +47,6 @@ class CNNModel(nn.Module):
         self.MMD_classifier.add_module('m_fc1', nn.Linear(256, 256))
         self.MMD_classifier.add_module('m_bn1', nn.BatchNorm1d(256))
         self.MMD_classifier.add_module('m_relu1', nn.ReLU(True))
-        # self.MMD_classifier.add_module('m_drop1', nn.Dropout())
         self.MMD_classifier.add_module('m_fc2', nn.Linear(256, 256))
         self.MMD_classifier.add_module('m_bn2', nn.BatchNorm1d(256))
         self.MMD_classifier.add_module('m_relu2', nn.ReLU(True))
